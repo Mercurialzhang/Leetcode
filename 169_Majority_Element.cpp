@@ -6,11 +6,11 @@ public:
         for (auto &ele : nums) {
             if (cout == 0) {
                 temp = ele;
-                cout ++;
+                cout += 2;
                 continue;
             }
             if (ele == temp) {
-                cout ++;
+                cout += 2;
             } else {
                 cout --;
             }
