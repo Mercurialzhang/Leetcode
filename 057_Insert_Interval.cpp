@@ -1,37 +1,29 @@
 class Solution {
 public:
     vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
-        vector<vector<int>> ans;
-        if (intervals.empty()) {
-            ans.push_back(newInterval);
-            return ans;
-        }
-        bool temp = true;
-        if (newInterval[1] < intervals.front()[0]) {
-            intervals.insert(intervals.begin(), newInterval);
-            return intervals;
-        } else if (newInterval[0] > intervals.back()[1]) {
-            intervals.insert(intervals.end(), newInterval);
-            return intervals;
-        }
-        for (int i = 0; i < intervals.size(); i ++) {
-            if (i != intervals.size() - 1 and newInterval[0] > intervals[i][1] and newInterval[1] < intervals[i+1][0]) {
-                ans.push_back(intervals[i]);
-                ans.push_back(newInterval);
+        int idx = 0;
+        while (idx < intervals.size()) {
+            if (newInterval[1] < intervals[idx][0]) {
+                intervals.insert(intervals.begin() + idx, newInterval);
+                return intervals;
             }
-            else if (newInterval[0] <= intervals[i][1] and newInterval[1] >= intervals[i][0]) {
-                if (temp) {
-                    intervals[i][0] = min(newInterval[0], intervals[i][0]);
-                    intervals[i][1] = max(newInterval[1], intervals[i][1]);
-                    ans.push_back(intervals[i]);
-                    temp = false;
-                } else {
-                    ans.back()[1] = max(ans.back()[1], intervals[i][1]);
-                }
-            } else {
-                ans.push_back(intervals[i]);
+            if (newInterval[0] <= intervals[idx][1]) {
+                break;
             }
+            idx += 1;
         }
-        return ans;
+        if (idx == intervals.size()) {
+            intervals.emplace_back(newInterval);
+            return intervals;
+        }
+        intervals[idx][0] = min(intervals[idx][0], newInterval[0]);
+        intervals[idx][1] = max(intervals[idx][1], newInterval[1]);
+        int endidx = idx;
+        while (endidx < intervals.size() and intervals[idx][1] >= intervals[endidx][0]) {
+            intervals[idx][1] = max(intervals[idx][1], intervals[endidx][1]);
+            endidx += 1;
+        }
+        intervals.erase(intervals.begin() + idx + 1, intervals.begin() + endidx);
+        return intervals;
     }
 };
